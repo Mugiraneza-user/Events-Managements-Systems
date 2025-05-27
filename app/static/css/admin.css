@@ -1,0 +1,39 @@
+
+
+/* Admin dashboard specific styles */
+.card .card-header {
+    font-weight: 500;
+}
+
+.card .card-footer .small {
+    font-size: 0.875rem;
+}
+
+.card-title {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.card-text {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 500;
+    background-color: #f8f9fa;
+}
+
+.list-group-item-action:hover {
+    background-color: #f8f9fa;
+}
+
+/* Icons */
+.fas {
+    margin-right: 0.5rem;
+}
+
+/* Buttons */
+.btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}

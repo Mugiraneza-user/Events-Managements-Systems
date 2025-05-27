@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            {% if event.image_url %}
+            <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h1 class="card-title">{{ event.title }}</h1>
+                <p class="card-text">{{ event.description }}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> {{ event.location }}
+                </li>
+                <li class="list-group-item">
+                    <i class="fas fa-calendar-alt"></i> <strong>Start:</strong> {{ event.start_date.strftime('%A, %B %d, %Y at %I:%M %p') }}
+                </li>
+                <li class="list-group-item">
+                    <i class="fas fa-clock"></i> <strong>End:</strong> {{ event.end_date.strftime('%A, %B %d, %Y at %I:%M %p') }}
+                </li>
+                <li class="list-group-item">
+                    <i class="fas fa-users"></i> <strong>Capacity:</strong> {{ event.registered_count }} / {{ event.capacity }} registered
+                    <div class="progress mt-2">
+                        <div class="progress-bar" role="progressbar" style="width: {{ (event.registered_count / event.capacity) * 100 }}%;" 
+                             aria-valuenow="{{ event.registered_count }}" aria-valuemin="0" aria-valuemax="{{ event.capacity }}">
+                            {{ event.registered_count }} / {{ event.capacity }}
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Registration</h5>
+            </div>
+            <div class="card-body">
+                {% if current_user.is_authenticated %}
+                    {% if user_registered %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> You are registered for this activity.
+                        </div>
+                        {% if event.start_date > now %}
+                            <form action="{{ url_for('events.cancel_registration', event_id=event.id) }}" method="POST">
+                                <button type="submit" class="btn btn-danger btn-block">Cancel Registration</button>
+                            </form>
+                        {% else %}
+                            <div class="alert alert-info">
+                                This activity has already started or passed.
+                            </div>
+                        {% endif %}
+                    {% elif event.is_full %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-circle"></i> This activity is at full capacity.
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-block" disabled>Registration Full</button>
+                    {% elif event.start_date <= now %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-circle"></i> Registration is closed for this activity.
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-block" disabled>Activity Started</button>
+                    {% else %}
+                        <p>Available Seats: <strong>{{ event.available_seats }}</strong></p>
+                        <form action="{{ url_for('events.register', event_id=event.id) }}" method="POST">
+                            <button type="submit" class="btn btn-success btn-block">Register for Activity</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Please log in to register for this activity.
+                    </div>
+                    <a href="{{ url_for('auth.login', next=request.path) }}" class="btn bg-success btn-block">Login to Register</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if current_user.is_authenticated and current_user.is_admin %}
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Admin Actions</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('admin.edit_event', event_id=event.id) }}" class="btn bg-success btn-block">Edit Activity</a>
+                <button type="button" class="btn btn-outline-danger btn-block" data-toggle="modal" data-target="#deleteEventModal">
+                    Delete Activity
+                </button>
+                
+                <!-- Delete Event Modal -->
+                <div class="modal fade" id="deleteEventModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title">Confirm Delete</h5>
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete the activity: <strong>{{ event.title }}</strong>?</p>
+                                <p class="text-danger">This action cannot be undone and will also delete all registrations for this activity.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <form action="{{ url_for('admin.delete_event', event_id=event.id) }}" method="POST">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

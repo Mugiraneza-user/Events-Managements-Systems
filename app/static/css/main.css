@@ -1,0 +1,62 @@
+/* Main styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+/* Card styles */
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Button styles */
+.btn {
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background-color: #4a89dc;
+    border-color: #4a89dc;
+}
+
+.btn-primary:hover {
+    background-color: #3b78d4;
+    border-color: #3b78d4;
+}
+
+/* Form styles */
+.form-control:focus {
+    border-color: #4a89dc;
+    box-shadow: 0 0 0 0.2rem rgba(74, 137, 220, 0.25);
+}
+
+/* Alert styles */
+.alert {
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Jumbotron styles */
+.jumbotron {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Event card image placeholder */
+.card-img-top.bg-light {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

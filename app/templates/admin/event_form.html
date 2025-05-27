@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{% if event %}Edit Activity{% else %}Create New Activity{% endif %}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{% if event %}{{ url_for('admin.edit_event', event_id=event.id) }}{% else %}{{ url_for('admin.create_event') }}{% endif %}">
+                    <div class="form-group">
+                        <label for="title">Activity Title</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ event.title if event else '' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="5" required>{{ event.description if event else '' }}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" value="{{ event.location if event else '' }}" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="start_date">Start Date & Time</label>
+                                <input type="datetime-local" class="form-control" id="start_date" name="start_date" value="{{ start_date if start_date else '' }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="end_date">End Date & Time</label>
+                                <input type="datetime-local" class="form-control" id="end_date" name="end_date" value="{{ end_date if end_date else '' }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="capacity">Capacity</label>
+                        <input type="number" class="form-control" id="capacity" name="capacity" min="1" value="{{ event.capacity if event else '50' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="image_url">Image URL (optional)</label>
+                        <input type="url" class="form-control" id="image_url" name="image_url" value="{{ event.image_url if event and event.image_url else '' }}">
+                        <small class="form-text text-muted">Enter a URL for an image to display with the activity.</small>
+                    </div>
+                    
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary">
+                            {% if event %}Save Changes{% else %}Create activity{% endif %}
+                        </button>
+                        <a href="{{ url_for('admin.events') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

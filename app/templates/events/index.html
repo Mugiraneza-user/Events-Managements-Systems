@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to Umuganda Management System</h1>
+    <p class="lead mb-4">Mark Your calendar Here .</p>
+    {% if not current_user.is_authenticated %}
+    <hr class="my-4">
+    <p>Log in to register for events or create an account to get started.</p>
+    <a class="btn btn-primary btn-lg bg-success" href="{{ url_for('auth.login') }}" role="button">Login</a>
+    <a class="btn btn-outline-primary btn-lg" href="{{ url_for('auth.register') }}" role="button">Register</a>
+    {% endif %}
+</div>
+
+<h2 class="mb-4">Upcoming Activities</h2>
+
+<div class="row">
+    {% for event in upcoming_events.items %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if event.image_url %}
+            <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
+            {% else %}
+            <div class="card-img-top bg-light text-center py-5">
+                <i class="fas fa-calendar-alt fa-4x text-muted"></i>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ event.title }}</h5>
+                <p class="card-text">{{ event.description|truncate(100) }}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <i class="fas fa-map-marker-alt"></i> {{ event.location }}
+                </li>
+                <li class="list-group-item">
+                    <i class="fas fa-calendar"></i> {{ event.start_date.strftime('%Y-%m-%d %H:%M') }}
+                </li>
+                <li class="list-group-item">
+                    <i class="fas fa-users"></i> {{ event.registered_count }} / {{ event.capacity }} registered
+                </li>
+            </ul>
+            <div class="card-footer bg-white">
+                <a href="{{ url_for('events.details', event_id=event.id) }}" class="btn bg-success btn-block">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info">No upcoming activity found.</div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if upcoming_events.pages > 1 %}
+<nav aria-label="Event pagination">
+    <ul class="pagination justify-content-center">
+        {% if upcoming_events.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('events.index', page=upcoming_events.prev_num) }}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+        </li>
+        {% endif %}
+        
+        {% for page_num in upcoming_events.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}
+                {% if page_num == upcoming_events.page %}
+                <li class="page-item active">
+                    <span class="page-link">
+                        {{ page_num }}
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('events.index', page=page_num) }}">{{ page_num }}</a>
+                </li>
+                {% endif %}
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if upcoming_events.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('events.index', page=upcoming_events.next_num) }}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Next</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% if past_events %}
+<h2 class="mt-5 mb-4">Past Activity</h2>
+<div class="row">
+    {% for event in past_events %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 bg-light">
+            <div class="card-body">
+                <h5 class="card-title">{{ event.title }}</h5>
+                <p class="card-text">{{ event.description|truncate(100) }}</p>
+                <p class="card-text text-muted">
+                    <small><i class="fas fa-calendar-alt"></i> {{ event.start_date.strftime('%Y-%m-%d') }}</small>
+                </p>
+                <a href="{{ url_for('events.details', event_id=event.id) }}" class="btn bg-success">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
